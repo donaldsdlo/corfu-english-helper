@@ -1,16 +1,25 @@
-;;; corfu-english-helper.el --- English helper with corfu interface
+;;; corfu-english-helper.el --- English helper with corfu interface  -*- lexical-binding: t; -*-
+
+;; Author: Andy Stewart <lazycat.manatee@gmail.com>
+;; Maintainer: Andy Stewart <lazycat.manatee@gmail.com>
+;; Copyright (C) 2024, Andy Stewart, all rights reserved.
+;; Created: 2024-09-30
+;; Version: 0.1
+;; Package-Requires: ((emacs "27.1") (corfu "1.0"))
+;; URL: https://github.com/manateelazycat/corfu-english-helper
+
+;; This file is NOT part of GNU Emacs.
 
 ;;; Commentary:
 ;;
 ;; English helper with corfu interface.
 ;;
 
-;;; Require
+;;; Code:
+
 (require 'cl-seq)
 (require 'corfu)
 (require 'corfu-english-helper-data)
-
-;;; Code:
 
 (defvar-local corfu-english-helper-active-p nil
   "The status of corfu-english-helper plugins.

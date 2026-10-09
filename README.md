@@ -6,16 +6,18 @@ This plugin base on fantastic completion framework [Corfu](https://github.com/mi
 <img src="./screenshot.png" width="400">
 
 ## Install
-1. Download corfu-english-helper:
+This package is installed with `use-package` and `straight.el` (assume both are already configured in your init file):
 
-```Bash
-git clone --depth=1 -b master https://github.com/manateelazycat/corfu-english-helper.git ~/.emacs.d/site-lisp/corfu-english-helper/
+```elisp
+(use-package corfu-english-helper
+  :straight (:host github :repo "manateelazycat/corfu-english-helper")
+  :defer t)
 ```
 
-2. Add corfu-english-helper to ```load-path```:
-```Elisp
-(add-to-list 'load-path "~/.emacs.d/site-lisp/corfu-english-helper/")
-(require 'corfu-english-helper)
+Enable it with `M-x toggle-corfu-english-helper`, or bind it to a key of your choice, e.g.:
+
+```elisp
+(global-set-key (kbd "M-s M-s") #'toggle-corfu-english-helper)
 ```
 
 ## Usage
@@ -34,3 +36,6 @@ You can replace with your favorite stardict dictionary's info filepath to genera
 
 # Acknowledgements
 I create [company-english-helper](https://github.com/manateelazycat/company-english-helper), this package is port to corfu-mode, most code of corfu version is written by [theFool32](https://github.com/theFool32).
+
+# Change Log
+- 2026-10-09: Convert to latest convention. Modernize the package header with `lexical-binding` and standard package metadata (Author/Maintainer/Copyright/Version/Package-Requires/URL); switch the install instructions in the README to `use-package` + `straight.el`; generated data file now carries a modern header.
