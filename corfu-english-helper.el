@@ -33,25 +33,36 @@ Default is disable.")
   (let ((showing-candidate-max-index (min (+ corfu-count corfu--scroll) corfu--total))
         (showing-candidate-min-index corfu--scroll))
     (if (and (eq corfu-english-helper-last-input corfu--input)
-             (eql showing-candidate-max-index corfu-english-helper-last-showing-candidate-max-index))
+             (eql showing-candidate-max-index corfu-english-helper-last-showing-candidate-max-index)
+             ;; Only trust the cache once a width has actually been
+             ;; stored; an interrupted computation may have set the
+             ;; input/index without the width.
+             corfu-english-helper-translation-max-width)
         corfu-english-helper-translation-max-width
-      (progn
-        (setq corfu-english-helper-last-showing-candidate-max-index showing-candidate-max-index)
-        (setq corfu-english-helper-last-input corfu--input)
-        (setq showing-candidates (seq-subseq corfu--candidates showing-candidate-min-index showing-candidate-max-index))
-        (setq corfu-english-helper-translation-max-width
-              (apply 'max (mapcar (lambda (w)
-                                    (string-width (get-text-property
-                                                   0
-                                                   :initials w)))
-                                  showing-candidates)))))))
+      (setq corfu-english-helper-last-showing-candidate-max-index showing-candidate-max-index)
+      (setq corfu-english-helper-last-input corfu--input)
+      (setq corfu-english-helper-translation-max-width
+            ;; Tolerate candidates without an `:initials' property:
+            ;; when this capf is merged with other backends (e.g. via
+            ;; `cape-capf-super'), `corfu--candidates' also holds their
+            ;; candidates, and `string-width' of nil would abort here.
+            (apply #'max 0
+                   (mapcar (lambda (w)
+                             (string-width (or (get-text-property 0 :initials w) "")))
+                           (seq-subseq corfu--candidates
+                                       showing-candidate-min-index
+                                       showing-candidate-max-index)))))))
 
 (defun corfu-english-helper-annotation (candidate)
-  (let* ((translation (get-text-property 0 :initials candidate))
-         (translation-width (string-width translation))
-         (max-translation-width (corfu-english-helper-translation-max-width))
-         (blank-width (- max-translation-width translation-width)))
-    (format "    %s" (concat translation (make-string blank-width ?\s)))))
+  "Return the padded translation annotation for CANDIDATE, or nil.
+Candidates without an `:initials' text property are not dictionary
+entries -- possible when this capf is merged with other backends
+(e.g. via `cape-capf-super') -- and get no annotation."
+  (when-let* ((translation (get-text-property 0 :initials candidate)))
+    (let* ((translation-width (string-width translation))
+           (max-translation-width (corfu-english-helper-translation-max-width))
+           (blank-width (- max-translation-width translation-width)))
+      (format "    %s" (concat translation (make-string blank-width ?\s))))))
 
 ;;;###autoload
 (defun corfu-english-helper-search (&optional interactive)
